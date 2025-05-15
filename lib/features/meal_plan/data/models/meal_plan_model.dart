@@ -18,12 +18,17 @@ class MealPlanModel {
       };
 
   factory MealPlanModel.fromJson(Map<String, dynamic> json) {
-    return MealPlanModel(
-      id: json['id'],
-      recipes: (json['recipes'] as List)
-          .map((e) => FavoriteRecipeModel.fromJson(e))
-          .toList(),
-      createdAt: DateTime.parse(json['createdAt']),
-    );
+    if (json['recipes'] is List) {
+      return MealPlanModel(
+        id: json['id'],
+        recipes: (json['recipes'] as List?)
+                ?.map((e) => FavoriteRecipeModel.fromJson(e))
+                .toList() ??
+            [],
+        createdAt: DateTime.parse(json['createdAt']),
+      );
+    } else {
+      throw Exception('Invalid json data');
+    }
   }
 }

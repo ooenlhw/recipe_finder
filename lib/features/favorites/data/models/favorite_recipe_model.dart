@@ -60,5 +60,19 @@ class FavoriteRecipeModel extends RecipeModel {
     };
   }
 
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+        id,
+        title,
+        image,
+        readyInMinutes,
+        servings,
+        summary,
+        instructions,
+        likes,
+        usedIngredientCount,
+        missedIngredientCount,
+        extendedIngredients,
+        usedIngredients,
+        missedIngredients
+      ];
 }

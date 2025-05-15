@@ -13,15 +13,15 @@ class MealPlanLoading extends MealPlanState {}
 
 class MealPlanLoaded extends MealPlanState {
   final List<MealPlanModel> mealPlans;
-  final List<String> currentRecipeIds;
+  final List<FavoriteRecipeModel> currentRecipes;
 
   const MealPlanLoaded({
     required this.mealPlans,
-    required this.currentRecipeIds,
+    required this.currentRecipes,
   });
 
   @override
-  List<Object?> get props => [mealPlans, currentRecipeIds];
+  List<Object?> get props => [mealPlans, currentRecipes];
 }
 
 class MealPlanError extends MealPlanState {

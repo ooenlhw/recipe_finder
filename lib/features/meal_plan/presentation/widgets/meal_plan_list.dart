@@ -7,14 +7,19 @@ Widget MealPlanList(List<MealPlanModel> mealPlans, BuildContext context) {
   if (mealPlans.isEmpty) {
     return const Center(child: Text("No meal plans yet."));
   }
+  final daysOfWeek = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
-        'Meal Plan Lists',
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
       const SizedBox(height: 10),
       SizedBox(
         // Give bounded height!
@@ -23,21 +28,47 @@ Widget MealPlanList(List<MealPlanModel> mealPlans, BuildContext context) {
           itemCount: mealPlans.length,
           itemBuilder: (context, index) {
             final plan = mealPlans[index];
-            print('plan json: ${plan.toJson()}');
-            final recipeTitles =
-                plan.recipes.map((recipe) => recipe.id).join(', ');
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: ListTile(
-                title: Text('Week: ${plan.id}'),
-                subtitle: Text('Recipes: $recipeTitles'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    context
-                        .read<MealPlanBloc>()
-                        .add(DeleteMealPlanEvent(plan.id));
-                  },
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Plan ID and Delete icon
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Plan ID: ${plan.id}',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            context
+                                .read<MealPlanBloc>()
+                                .add(DeleteMealPlanEvent(plan.id));
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Recipes per day
+                    ...List.generate(daysOfWeek.length, (i) {
+                      final recipe = (i < plan.recipes.length)
+                          ? plan.recipes[i].title
+                          : 'No recipe';
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Text(
+                          '${daysOfWeek[i]}: $recipe',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               ),
             );

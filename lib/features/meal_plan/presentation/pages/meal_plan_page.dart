@@ -14,6 +14,7 @@ class MealPlanPage extends StatefulWidget {
 
 class _MealPlanPageState extends State<MealPlanPage> {
   String? selectedWeekKey;
+  String? formattedWeekKey;
   final weekdays = [
     'Monday',
     'Tuesday',
@@ -33,13 +34,26 @@ class _MealPlanPageState extends State<MealPlanPage> {
     'Saturday': null,
     'Sunday': null,
   };
+
+  String formatWeekKey(String weekKey) {
+    final year = weekKey.substring(0, 4);
+    final week = weekKey.substring(5);
+    weekKey = '$year Week $week';
+    return weekKey;
+  }
+
   String getWeekKey(DateTime date) {
-    final firstDayOfYear = DateTime(date.year, 1, 1);
-    final weekOfYear =
-        ((date.difference(firstDayOfYear).inDays + firstDayOfYear.weekday) / 7)
-            .ceil();
+    final weekNumber = _getWeekNumber(date);
     final year = date.year;
-    return '$year${weekOfYear.toString().padLeft(2, '0')}';
+    return '${year}W${weekNumber.toString().padLeft(2, '0')}'; // e.g., "2025W20"
+  }
+
+  int _getWeekNumber(DateTime date) {
+    final firstDayOfYear = DateTime(date.year, 1, 1);
+    final daysOffset = firstDayOfYear.weekday - 1; // Monday is the first day
+    final firstMonday = firstDayOfYear.subtract(Duration(days: daysOffset));
+    final diff = date.difference(firstMonday);
+    return ((diff.inDays) / 7).ceil();
   }
 
   void pickWeekFromCalendar() async {
@@ -49,10 +63,12 @@ class _MealPlanPageState extends State<MealPlanPage> {
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
+
     if (pickedDate != null) {
-      final weekKey = getWeekKey(pickedDate);
+      final weekKey = getWeekKey(pickedDate); // Example: "2025W20"
       setState(() {
         selectedWeekKey = weekKey;
+        formattedWeekKey = formatWeekKey(weekKey); // Example: "2025 Week 20"
       });
     }
   }
@@ -110,6 +126,9 @@ class _MealPlanPageState extends State<MealPlanPage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (favState is FavoritesLoaded) {
+                  if (favState.favorites.isEmpty) {
+                    return const Center(child: Text('Add to favorites first'));
+                  }
                   return SafeArea(
                     child: Padding(
                       padding: EdgeInsets.only(
@@ -126,8 +145,8 @@ class _MealPlanPageState extends State<MealPlanPage> {
                                   child: ElevatedButton.icon(
                                     onPressed: pickWeekFromCalendar,
                                     icon: const Icon(Icons.calendar_today),
-                                    label:
-                                        Text(selectedWeekKey ?? 'Select Week'),
+                                    label: Text(
+                                        formattedWeekKey ?? 'Select a Week'),
                                   ),
                                 ),
                               ],
@@ -169,7 +188,7 @@ class _MealPlanPageState extends State<MealPlanPage> {
                             }),
                             const SizedBox(height: 10),
                             ElevatedButton.icon(
-                              onPressed: (selectedWeekKey == null ||
+                              onPressed: (formattedWeekKey == null ||
                                       selectedRecipesPerDay.values
                                           .every((id) => id == null))
                                   ? null
@@ -180,7 +199,7 @@ class _MealPlanPageState extends State<MealPlanPage> {
                                               .toList();
                                       context.read<MealPlanBloc>().add(
                                             SaveMealPlanEvent(
-                                              weekKey: selectedWeekKey!,
+                                              weekKey: formattedWeekKey!,
                                               favoriteRecipes: selectedRecipe,
                                             ),
                                           );

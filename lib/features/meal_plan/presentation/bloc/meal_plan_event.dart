@@ -33,10 +33,10 @@ class DeleteMealPlanEvent extends MealPlanEvent {
 }
 
 class AddFavoritesMealPlanEvent extends MealPlanEvent {
-  final String recipeId;
+  final FavoriteRecipeModel favoriteRecipes;
 
-  const AddFavoritesMealPlanEvent(this.recipeId);
+  const AddFavoritesMealPlanEvent(this.favoriteRecipes);
 
   @override
-  List<Object?> get props => [recipeId];
+  List<Object?> get props => [favoriteRecipes];
 }

@@ -35,6 +35,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 itemCount: state.favorites.length,
                 itemBuilder: (context, index) {
                   final recipe = state.favorites[index];
+                  print("favorite recipe card: ${recipe.toJson()}");
                   return FavoriteRecipeCard(recipe: recipe);
                 },
               );

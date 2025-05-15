@@ -14,8 +14,7 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
   final SaveMealPlan saveMealPlan;
   final DeleteMealPlan deleteMealPlan;
   final AddFavoritesMealPlan addFavoritesMealPlan;
-
-  List<String> currentRecipeIds = [];
+  List<FavoriteRecipeModel> currentRecipes = [];
 
   MealPlanBloc({
     required this.loadMealPlans,
@@ -35,41 +34,23 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
   ) async {
     emit(MealPlanLoading());
     try {
-      final mealPlansMap = await loadMealPlans(); // Map<String, List<int>>
-      final mealPlansList = mealPlansMap.entries
-          .map(
-            (entry) => MealPlanModel(
-              id: entry.key,
-              recipes: entry.value
-                  .map(
-                    (id) => FavoriteRecipeModel(
-                      id: id,
-                      title: '',
-                      image: '',
-                      readyInMinutes: 0,
-                      servings: 0,
-                      summary: '',
-                      instructions: '',
-                      likes: 0,
-                      usedIngredientCount: 0,
-                      missedIngredientCount: 0,
-                      extendedIngredients: const [],
-                      usedIngredients: const [],
-                      missedIngredients: const [],
-                    ),
-                  )
-                  .toList(),
-              createdAt: DateTime.now(),
-            ),
-          )
-          .toList();
+      final mealPlansMap = await loadMealPlans();
+      final mealPlansList = mealPlansMap.entries.map((entry) {
+        final id = entry.key;
+        final recipeModels = entry.value.expand((m) => m.recipes).toList();
+        return MealPlanModel(
+          id: id,
+          recipes: recipeModels,
+          createdAt: entry.value.first.createdAt,
+        );
+      }).toList();
 
       emit(MealPlanLoaded(
         mealPlans: mealPlansList,
-        currentRecipeIds: currentRecipeIds,
+        currentRecipes: currentRecipes,
       ));
     } catch (error) {
-      emit(MealPlanError(error.toString()));
+      emit(MealPlanError("Failed to load meal plans: ${error.toString()}"));
     }
   }
 
@@ -79,6 +60,8 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
   ) async {
     emit(MealPlanLoading());
     try {
+      print(
+          'weekKey: ${event.weekKey}, favoriteRecipes to Save Meal Plan: ${event.favoriteRecipes.first.title}');
       await saveMealPlan(event.weekKey, event.favoriteRecipes);
       add(LoadMealPlansEvent());
       emit(MealPlanSaved());
@@ -104,14 +87,14 @@ class MealPlanBloc extends Bloc<MealPlanEvent, MealPlanState> {
     AddFavoritesMealPlanEvent event,
     Emitter<MealPlanState> emit,
   ) {
-    if (!currentRecipeIds.contains(event.recipeId)) {
-      currentRecipeIds.add(event.recipeId);
+    if (!currentRecipes.contains(event.favoriteRecipes)) {
+      currentRecipes.add(event.favoriteRecipes);
     }
     if (state is MealPlanLoaded) {
       final currentState = state as MealPlanLoaded;
       emit(MealPlanLoaded(
         mealPlans: currentState.mealPlans,
-        currentRecipeIds: List.from(currentRecipeIds),
+        currentRecipes: currentRecipes,
       ));
     }
   }
