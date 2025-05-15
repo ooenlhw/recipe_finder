@@ -1,0 +1,10 @@
+[
+  {
+    "id": "2025-W20",
+    "recipes": [
+      { "id": 123, "title": "Pasta" },
+      { "id": 456, "title": "Chicken Soup" }
+    ],
+    "createdAt": "2025-05-14T10:00:00Z"
+  }
+]
