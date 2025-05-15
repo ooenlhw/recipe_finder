@@ -110,12 +110,6 @@ Testing: not included
 
 ---
 
-## 📸 Screenshots
-
-> Add screenshots here for key screens: Search, Recipe List, Details, Favorites, Meal Plan.
-
----
-
 ## 📃 License
 
 MIT License
