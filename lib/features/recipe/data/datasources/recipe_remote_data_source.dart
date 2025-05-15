@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:http/http.dart' as http;
 import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
 

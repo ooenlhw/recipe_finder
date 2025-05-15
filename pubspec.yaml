@@ -78,6 +78,12 @@ flutter_launcher_icons:
 flutter:
   assets:
     - assets/sample_meal_plans.json
+    - assets/images/ingredients.jpg
+    - assets/images/vegetables.gif
+    - assets/images/fruits.jpg
+    - assets/images/noodle.jpg
+    - assets/images/smoothie.jpg
+    - assets/images/cake.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

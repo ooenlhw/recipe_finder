@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recipe_finder/features/favorites/data/models/favorite_recipe_model.dart';
 import 'package:recipe_finder/features/favorites/presentation/bloc/favorites_bloc.dart';
-import 'package:recipe_finder/features/meal_plan/data/models/meal_plan_model.dart';
 import 'package:recipe_finder/features/meal_plan/presentation/bloc/meal_plan_bloc.dart';
 import 'package:recipe_finder/features/meal_plan/presentation/widgets/meal_plan_list.dart';
 
