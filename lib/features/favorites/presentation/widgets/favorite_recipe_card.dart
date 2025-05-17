@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:recipe_finder/features/favorites/data/models/favorite_recipe_model.dart';
 import 'package:recipe_finder/features/favorites/presentation/bloc/favorites_bloc.dart';
 
@@ -27,6 +28,9 @@ class FavoriteRecipeCard extends StatelessWidget {
             context.read<FavoritesBloc>().add(RemoveFromFavorites(recipe.id));
           },
         ),
+        onTap: () {
+          context.push('/recipes/${recipe.id}');
+        },
       ),
     );
   }

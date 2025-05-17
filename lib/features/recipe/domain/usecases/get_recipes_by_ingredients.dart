@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:recipe_finder/core/error/failures.dart';
-import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
+import 'package:recipe_finder/features/recipe/domain/entities/recipe_entity.dart';
 import 'package:recipe_finder/features/recipe/domain/repositories/recipe_repository.dart';
 
 class GetRecipesByIngredients {
@@ -8,7 +8,7 @@ class GetRecipesByIngredients {
 
   GetRecipesByIngredients({required this.repository});
 
-  Future<Either<Failure, List<RecipeModel>>> call(String ingredients) {
+  Future<Either<Failure, List<RecipeEntity>>> call(String ingredients) {
     return repository.getRecipesByIngredients(ingredients);
   }
 }

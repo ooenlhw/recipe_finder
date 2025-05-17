@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   equatable: ^2.0.5
+  get_it: ^8.0.0
   go_router: ^14.6.3
   http: ^1.4.0
   provider: ^6.1.0
@@ -79,7 +80,7 @@ flutter:
   assets:
     - assets/sample_meal_plans.json
     - assets/images/ingredients.jpg
-    - assets/images/vegetables.gif
+    - assets/images/vegetables.jpg
     - assets/images/fruits.jpg
     - assets/images/noodle.jpg
     - assets/images/smoothie.jpg

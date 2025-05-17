@@ -4,7 +4,7 @@ import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
 
 abstract class RecipeRemoteDataSource {
   Future<List<RecipeModel>> getRecipesByIngredients(String ingredients);
-  Future<List<RecipeModel>> getRecipeById(String id);
+  Future<RecipeModel> getRecipeById(String id);
 }
 
 class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
@@ -28,14 +28,14 @@ class RecipeRemoteDataSourceImpl implements RecipeRemoteDataSource {
   }
 
   @override
-  Future<List<RecipeModel>> getRecipeById(String id) async {
+  Future<RecipeModel> getRecipeById(String id) async {
     final response = await client.get(
       Uri.parse(
           'https://api.spoonacular.com/recipes/$id/information?apiKey=$apiKey'),
     );
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      return [RecipeModel.fromJson(json)];
+      return RecipeModel.fromJson(json);
     } else {
       throw Exception('Failed to load recipe by id');
     }

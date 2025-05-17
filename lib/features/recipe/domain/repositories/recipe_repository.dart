@@ -5,5 +5,5 @@ import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
 abstract class RecipeRepository {
   Future<Either<Failure, List<RecipeModel>>> getRecipesByIngredients(
       String ingredients);
-  Future<List<RecipeModel>> getRecipeById(String id);
+  Future<Either<Failure, RecipeModel>> getRecipeById(String id);
 }

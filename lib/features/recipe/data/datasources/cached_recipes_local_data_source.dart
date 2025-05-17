@@ -1,44 +1,86 @@
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:recipe_finder/features/recipe/data/models/recipe_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// abstract class CachedRecipesLocalDataSource {
-//   Future<void> cacheRecipes(List<RecipeModel> recipes);
-//   Future<List<RecipeModel>> getCachedRecipes();
-//   Future<bool> isCacheValid();
-// }
+abstract class CachedRecipesLocalDataSource {
+  Future<void> cacheRecipes(String qurey, List<RecipeModel> recipes);
+  Future<List<RecipeModel>> getCachedRecipes(String query);
+  Future<bool> isCacheValid(String query);
 
-// class CachedRecipesLocalDataSourceImpl implements CachedRecipesLocalDataSource {
-//   final SharedPreferences sharedPreferences;
-//   static const String cacheKey = 'cached_recipes';
-//   static const String timestampKey = 'cached_recipes_timestamp';
+  Future<void> cacheRecipeById(String id, RecipeModel recipe);
+  Future<RecipeModel?> getCachedRecipeById(String id);
+  Future<bool> isCacheValidForRecipe(String id);
+}
 
-//   CachedRecipesLocalDataSourceImpl({required this.sharedPreferences});
+class CachedRecipesLocalDataSourceImpl implements CachedRecipesLocalDataSource {
+  final SharedPreferences sharedPreferences;
 
-//   @override
-//   Future<void> cacheRecipes(List<RecipeModel> recipes) async {
-//     final jsonString = json.encode(recipes.map((e) => e.toJson()).toList());
-//     await sharedPreferences.setString(cacheKey, jsonString);
-//     await sharedPreferences.setInt(
-//         timestampKey, DateTime.now().millisecondsSinceEpoch);
-//   }
+  CachedRecipesLocalDataSourceImpl({required this.sharedPreferences});
 
-//   @override
-//   Future<List<RecipeModel>> getCachedRecipes() async {
-//     final jsonString = sharedPreferences.getString(cacheKey);
-//     if (jsonString != null) {
-//       final List<dynamic> decoded = json.decode(jsonString);
-//       return decoded.map((e) => RecipeModel.fromJson(e)).toList();
-//     }
-//     return [];
-//   }
+  @override
+  Future<void> cacheRecipes(String query, List<RecipeModel> recipes) async {
+    final key = 'cache_$query';
+    final timestampKey = 'cache_time_$query';
+    final jsonString = json.encode(recipes.map((e) => e.toJson()).toList());
+    await sharedPreferences.setString(key, jsonString);
+    await sharedPreferences.setInt(
+        timestampKey, DateTime.now().millisecondsSinceEpoch);
+  }
 
-//   Future<bool> isCacheValid() async {
-//     final timestamp = sharedPreferences.getInt(timestampKey);
-//     if (timestamp == null) return false;
+  @override
+  Future<List<RecipeModel>> getCachedRecipes(String query) async {
+    final key = 'cache_$query';
+    final jsonString = sharedPreferences.getString(key);
+    if (jsonString != null) {
+      final List<dynamic> decoded = json.decode(jsonString);
+      return decoded.map((e) => RecipeModel.fromJson(e)).toList();
+    }
+    return [];
+  }
 
-//     final cachedTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-//     return DateTime.now().difference(cachedTime).inMinutes < 30;
-//   }
-// }
+  @override
+  Future<bool> isCacheValid(String query) async {
+    final timestampKey = 'cache_time_$query';
+    final timestamp = sharedPreferences.getInt(timestampKey);
+    if (timestamp == null) return false;
+
+    final cachedTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return DateTime.now().difference(cachedTime).inMinutes < 30;
+  }
+
+  // Cache single recipe
+  @override
+  Future<void> cacheRecipeById(String id, RecipeModel recipe) async {
+    final key = 'cache_recipe_$id';
+    final timestampKey = 'cache_recipe_time_$id';
+    final jsonString = json.encode(recipe.toJson());
+    await sharedPreferences.setString(key, jsonString);
+    await sharedPreferences.setInt(
+        timestampKey, DateTime.now().millisecondsSinceEpoch);
+  }
+
+  // Get single cached recipe by id
+  @override
+  Future<RecipeModel?> getCachedRecipeById(String id) async {
+    final key = 'cache_recipe_$id';
+    final jsonString = sharedPreferences.getString(key);
+    print('getCachedRecipeById jsonString: $jsonString');
+    if (jsonString != null) {
+      final decoded = json.decode(jsonString);
+      return RecipeModel.fromJson(decoded);
+    }
+    return null;
+  }
+
+  // Check if cache for single recipe is valid
+  @override
+  Future<bool> isCacheValidForRecipe(String id) async {
+    final timestampKey = 'cache_recipe_time_$id';
+    final timestamp = sharedPreferences.getInt(timestampKey);
+    if (timestamp == null) return false;
+
+    final cachedTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return DateTime.now().difference(cachedTime).inMinutes < 30;
+  }
+}

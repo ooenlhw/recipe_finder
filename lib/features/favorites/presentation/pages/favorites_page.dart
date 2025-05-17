@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:recipe_finder/features/favorites/presentation/bloc/favorites_bloc.dart';
 import 'package:recipe_finder/features/favorites/presentation/widgets/favorite_recipe_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recipe_finder/service_locator.dart' as di;
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -13,10 +14,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FavoritesBloc(
-        addFavorite: context.read(),
-        getFavorites: context.read(),
-        removeFavorite: context.read(),
+      create: (_) => FavoritesBloc(
+        addFavorite: di.sl(),
+        getFavorites: di.sl(),
+        removeFavorite: di.sl(),
       )..add(LoadFavorites()),
       child: Scaffold(
         appBar: AppBar(
