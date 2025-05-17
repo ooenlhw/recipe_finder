@@ -9,6 +9,7 @@ import 'package:recipe_finder/features/favorites/presentation/bloc/favorites_blo
 import 'package:recipe_finder/features/recipe/domain/entities/recipe_entity.dart';
 import 'package:recipe_finder/features/recipe/domain/repositories/recipe_repository.dart';
 import 'package:recipe_finder/features/recipe/presentation/bloc/recipe_detail_bloc.dart';
+import 'package:html/parser.dart' as html_parser;
 
 class RecipeDetailPage extends StatefulWidget {
   final String id;
@@ -24,6 +25,12 @@ class RecipeDetailPage extends StatefulWidget {
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   RecipeEntity? recipe;
   bool isOnline = false;
+
+  /// Cleans instructions by removing <ol>, <li>, and other HTML tags.
+  String cleanInstructions(String htmlString) {
+    final document = html_parser.parse(htmlString);
+    return document.body?.text.trim() ?? '';
+  }
 
   @override
   void initState() {
@@ -141,7 +148,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      recipe.instructions,
+                      cleanInstructions(recipe.instructions),
                       style: const TextStyle(
                         fontSize: 16,
                       ),
