@@ -10,9 +10,11 @@ import 'package:recipe_finder/features/recipe/presentation/bloc/recipe_list_bloc
 import 'service_locator.dart' as di;
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await di.init();
-  final router = createRouter(recipeRepository: di.sl());
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure the framework is initialized
+  await di
+      .init(); // Initialize the service locator (Sets up dependency injection)
+  final router = createRouter(recipeRepository: di.sl()); // create app router
   runApp(MyApp(router: router));
 }
 
